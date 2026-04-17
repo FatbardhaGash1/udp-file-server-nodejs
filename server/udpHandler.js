@@ -23,3 +23,24 @@ function init(srv) {
     server.send(Buffer.from(response), rinfo.port, rinfo.address);
   });
 }
+function handleCommand(message, clientId) {
+  const [cmd, ...args] = message.split(' ');
+  const isAdmin = clientManager.isAdmin(clientId);
+
+  switch (cmd) {
+    case '/list': return fileManager.listFiles();
+    case '/read': return fileManager.readFile(args[0]);
+    case '/upload':
+      if (!isAdmin) return 'Permission denied';
+      return fileManager.uploadFile(args[0], args.slice(1).join(' '));
+    case '/download': return fileManager.readFile(args[0]);
+    case '/delete':
+      if (!isAdmin) return 'Permission denied';
+      return fileManager.deleteFile(args[0]);
+    case '/search': return fileManager.searchFiles(args[0]);
+    case '/info': return fileManager.fileInfo(args[0]);
+    default: return 'Unknown command';
+  }
+}
+
+module.exports = { init };
