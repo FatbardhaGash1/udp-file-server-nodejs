@@ -8,14 +8,15 @@ fs.mkdirSync(BASE_DIR);
 }
 
 function listFiles() {
-return fs.readdirSync(BASE_DIR).join('\n') || 'No files';
+  const files = fs.readdirSync(BASE_DIR);
+  return files.length ? files.join('\n') : 'No files';
 }
 
 function readFile(filename) {
 if (!filename) return 'Missing filename';
 const filePath = path.join(BASE_DIR, filename);
 if (!fs.existsSync(filePath)) return 'File not found';
-return fs.readFileSync(filePath, 'utf-8');
+ return fs.readFileSync(filePath, 'utf-8') || 'Empty file';
 }
 
 function uploadFile(filename, content) {
@@ -34,8 +35,9 @@ return 'File deleted';
 }
 
 function searchFiles(keyword) {
-if (!keyword) return 'Missing keyword';
-return fs.readdirSync(BASE_DIR).filter(f => f.includes(keyword)).join('\n') || 'No match';
+  if (!keyword) return 'Missing keyword';
+  const results = fs.readdirSync(BASE_DIR).filter(f => f.includes(keyword));
+  return results.length ? results.join('\n') : 'No match';
 }
 
 function fileInfo(filename) {
